@@ -1,0 +1,44 @@
+---
+- name: play01 create user on my dev...
+  hosts: ciscodev
+  tasks:
+    - name: T1 cisco commands
+      cisco.ios.ios_command:
+        commands:
+          - enable
+          - configure terminal
+          - username admin1 privilege 15 secret mypass
+          - end
+          - write memory
+          - show running-config | include username
+      register: outs1
+
+    - name: T2 printout on screen
+      debug:
+        var: outs1.stdout_lines
+
+
+    - name: T3 create a new user by ansible mod...
+      cisco.ios.ios_user:
+        name: anwar
+        nopassword: true
+        sshkey: "{{ lookup('file', '~/.ssh/lab_rsa.pub') }}"
+        state: present
+
+    - name: T4 Configure the login banner
+      cisco.ios.ios_banner:
+        banner: login
+        text: |
+          this is NTI NETWORK login banner
+          that contains a multiline
+          string
+        state: present
+
+    - name: T5 configure interface settings
+      cisco.ios.ios_config:
+        lines:
+        - description test interface
+        - ip address 172.31.1.1 255.255.255.0
+        parents: interface GigabitEthernet2
+
+
