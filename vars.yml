@@ -1,0 +1,8 @@
+    IP: 192.168.3.1
+    IF: GigabitEthernet2
+    USER:
+      - admin1
+      - admin2
+      - admin3
+      - admin4
+      - medo3

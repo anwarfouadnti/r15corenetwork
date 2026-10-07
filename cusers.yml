@@ -1,0 +1,26 @@
+    - name: T1 cisco commands
+      cisco.ios.ios_command:
+        commands:
+          - enable
+          - configure terminal
+          - username anwar privilege 15 secret mypass
+          - end
+          - write memory
+          - show running-config | include username
+      register: outs1
+
+    - name: T2 printout on screen
+      debug:
+        var: outs1.stdout_lines
+
+
+    - name: T3 create a new user by ansible mod...
+      cisco.ios.ios_user:
+        name: "{{ item }}"
+        nopassword: true
+        sshkey: "{{ lookup('file', '~/.ssh/lab_rsa.pub') }}"
+        state: present
+        privilege: 15
+      loop: "{{ USER }}"
+      notify:
+        - "T4 banner"
